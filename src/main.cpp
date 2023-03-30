@@ -98,7 +98,8 @@ int main() {
            *   sequentially every .02 seconds
            */
 
-
+	  next_x_vals.push_back(1);
+	  next_y_vals.push_back(1);
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
 
