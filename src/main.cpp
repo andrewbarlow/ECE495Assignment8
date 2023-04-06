@@ -147,28 +147,25 @@ int main() {
             double check_speed_change = sqrt(vx_change*vx_change + vy_change*vy_change);
             s += (double)prev_size * 0.02 * check_speed_change;
 
-            if (s > car_s && (s - car_s) < 30 && d < (2+4*0+2) && d > (2+4*0-2)){
+            if (s + 20 > car_s && (s - car_s) < 50 && d < (2+4*0+2) && d > (2+4*0-2)){
               left_open = false;
             }
             else{
               left_open = true;
             }
-            if (s > car_s && (s - car_s) < 30 && d < (2+4*1+2) && d > (2+4*1-2)){
+            if (s + 20 > car_s&& (s - car_s) < 50 && d < (2+4*1+2) && d > (2+4*1-2)){
               center_open = false;
             }
             else{
               center_open = true;
             }
-            if (s > car_s && (s - car_s) < 30 && d < (2+4*2+2) && d > (2+4*2-2)){
+            if (s + 20 > car_s && (s - car_s) < 50 && d < (2+4*2+2) && d > (2+4*2-2)){
               right_open = false;
             }
             else{
               right_open = true;
             }
-
-            std::cout << "left open: "   << left_open << std::endl;
-            std::cout << "center open: " << center_open << std::endl;
-            std::cout << "right open: "  << right_open << std::endl;
+            
 
             //std::cout << "Checking car lane" << d << std::endl;
             // Check if the car is in the same lane as the ego vehicle
@@ -183,8 +180,9 @@ int main() {
               if (check_car_s > car_s && (check_car_s - car_s) < 30){
                 //ref_vel = 29.5;
                 too_close = true;
-                //std::cout << "Lane is now: " << std::endl;
-                //std::cout << lane << std::endl;
+                std::cout << "left open: "   << left_open << std::endl;
+                std::cout << "center open: " << center_open << std::endl;
+                std::cout << "right open: "  << right_open << std::endl;
                 if(lane == 1){
                   if (left_open){
                     lane = 0;
