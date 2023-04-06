@@ -136,41 +136,67 @@ int main() {
         
           // Find ref_v to use
           for (int i = 0; i < sensor_fusion.size(); i++) {
-            // Check if the car is in the same lane as the ego vehicle
+            // check other lanes
             float d = sensor_fusion[i][6];
+            float s = sensor_fusion[i][5];
+            bool left_open   = true;
+            bool right_open  = true;
+            bool center_open = true;  
+            double vx_change = sensor_fusion[i][3];
+            double vy_change = sensor_fusion[i][4];
+            double check_speed_change = sqrt(vx_change*vx_change + vy_change*vy_change);
+            s += (double)prev_size * 0.02 * check_speed_change;
+
+            if (s > car_s && (s - car_s) < 30 && d < (2+4*0+2) && d > (2+4*0-2)){
+              left_open = false;
+            }
+            else{
+              left_open = true;
+            }
+            if (s > car_s && (s - car_s) < 30 && d < (2+4*1+2) && d > (2+4*1-2)){
+              center_open = false;
+            }
+            else{
+              center_open = true;
+            }
+            if (s > car_s && (s - car_s) < 30 && d < (2+4*2+2) && d > (2+4*2-2)){
+              right_open = false;
+            }
+            else{
+              right_open = true;
+            }
+
+            std::cout << "left open: "   << left_open << std::endl;
+            std::cout << "center open: " << center_open << std::endl;
+            std::cout << "right open: "  << right_open << std::endl;
+
+            //std::cout << "Checking car lane" << d << std::endl;
+            // Check if the car is in the same lane as the ego vehicle
             if (d < (2+4*lane+2) && d > (2+4*lane-2)){
               double vx = sensor_fusion[i][3];
               double vy = sensor_fusion[i][4];
               double check_speed = sqrt(vx*vx + vy*vy);
               double check_car_s = sensor_fusion[i][5];
-              
               // Calculate the check_car's future location
               check_car_s += (double)prev_size * 0.02 * check_speed;
               // If the check_car is within 30 meters in front, reduce ref_vel so that we don't hit it
               if (check_car_s > car_s && (check_car_s - car_s) < 30){
                 //ref_vel = 29.5;
                 too_close = true;
-                std::cout << "Lane is now: " << std::endl;
-                std::cout << lane << std::endl;
+                //std::cout << "Lane is now: " << std::endl;
+                //std::cout << lane << std::endl;
                 if(lane == 1){
-                  // if lane 0 is empty
-                  lane = 0;
-                  // else if lane 0 is unsafe and lane 1 is safe
-                  // lane = 1;
-                  // else
-                  // pass;
+                  if (left_open){
+                    lane = 0;
+                  }
+                  else if(right_open){
+                    lane = 2;
+                  }
                 }
-                else if(lane == 0){
-                  // if lane 1 is empty
-                  // lane = 1;
-                  // else
-                  // pass;
-                }
-                else if(lane == 2){
-                  // if lane 1 is empty
-                  // lane = 1;
-                  // else
-                  // pass;
+                else{
+                  if (center_open){
+                    lane = 1;
+                  }
                 }
               } 
             }
