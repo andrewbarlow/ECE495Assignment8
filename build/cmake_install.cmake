@@ -1,4 +1,4 @@
-# Install script for directory: /home/andre/projects/ECE495Assignment8
+# Install script for directory: /home/ghost/Desktop/A8/ECE495Assignment8
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/andre/projects/ECE495Assignment8/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ghost/Desktop/A8/ECE495Assignment8/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

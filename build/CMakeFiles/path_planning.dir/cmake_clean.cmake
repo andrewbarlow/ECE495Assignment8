@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/path_planning.dir/src/main.cpp.o"
-  "path_planning"
   "path_planning.pdb"
+  "path_planning"
 )
 
 # Per-language clean rules from dependency scanning.

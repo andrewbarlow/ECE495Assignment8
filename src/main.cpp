@@ -14,6 +14,29 @@ using nlohmann::json;
 using std::string;
 using std::vector;
 
+/*
+  TO-DOS:
+  1.Perform lane shift when front vehicle is too slow, done at least once.
+    - if the front vehicle is too slow, switch into the right or left lane
+      while avoiding collisions
+
+  2. No collisions
+    - self-explanatory
+
+  3. Count( Exceed( speed lim || acc lim || jerk lim )) <= 1
+    - If any limits are exceeded for more than 2 sec straight
+      you lose this point
+  
+  4. Complete 2 miles within 3 min
+    - Drive @ speed limit and use 1. to navigate highway
+  
+  5. No limits exceeded
+  - Speed limit
+  - Acceleration limit
+  - Jerk limit
+*/
+
+
 int main() {
   uWS::Hub h;
 
@@ -26,11 +49,13 @@ int main() {
 
   // Start in lane 1, which is the center lane (0 is left and 2 is right)
   int lane = 1;
+  
   // Start at zero velocity and gradually accelerate
   double ref_vel = 0.0; // mph
 
   // Waypoint map to read from
   string map_file_ = "../data/highway_map.csv";
+  
   // The max s value before wrapping around the track back to 0
   double max_s = 6945.554;
 
@@ -76,11 +101,11 @@ int main() {
           // j[1] is the data JSON object
           
           // Main car's localization Data
-          double car_x = j[1]["x"];
-          double car_y = j[1]["y"];
-          double car_s = j[1]["s"];
-          double car_d = j[1]["d"];
-          double car_yaw = j[1]["yaw"];
+          double car_x     = j[1]["x"];
+          double car_y     = j[1]["y"];
+          double car_s     = j[1]["s"];
+          double car_d     = j[1]["d"];
+          double car_yaw   = j[1]["yaw"];
           double car_speed = j[1]["speed"];
 
           // Previous path data given to the Planner
@@ -125,6 +150,28 @@ int main() {
               if (check_car_s > car_s && (check_car_s - car_s) < 30){
                 //ref_vel = 29.5;
                 too_close = true;
+                std::cout << "Lane is now: " << std::endl;
+                std::cout << lane << std::endl;
+                if(lane == 1){
+                  // if lane 0 is empty
+                  lane = 0;
+                  // else if lane 0 is unsafe and lane 1 is safe
+                  // lane = 1;
+                  // else
+                  // pass;
+                }
+                else if(lane == 0){
+                  // if lane 1 is empty
+                  // lane = 1;
+                  // else
+                  // pass;
+                }
+                else if(lane == 2){
+                  // if lane 1 is empty
+                  // lane = 1;
+                  // else
+                  // pass;
+                }
               } 
             }
           }
@@ -205,6 +252,7 @@ int main() {
           for (int i = 1; i <= 50-previous_path_x.size(); i++) {
             // Reduce speed if too close, add if no longer close
             if (too_close) {
+              // change lanes left OR right
               ref_vel -= .224;
             } else if (ref_vel < 49.5) {
               ref_vel += .224;
