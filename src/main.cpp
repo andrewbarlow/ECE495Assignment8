@@ -133,39 +133,19 @@ int main() {
           }
         
           bool too_close = false; // True if too close to a car in front
+          bool left_open   = true;
+          bool right_open  = true;
+          bool center_open = true;  
         
           // Find ref_v to use
           for (int i = 0; i < sensor_fusion.size(); i++) {
             // check other lanes
             float d = sensor_fusion[i][6];
             float s = sensor_fusion[i][5];
-            bool left_open   = true;
-            bool right_open  = true;
-            bool center_open = true;  
             double vx_change = sensor_fusion[i][3];
             double vy_change = sensor_fusion[i][4];
             double check_speed_change = sqrt(vx_change*vx_change + vy_change*vy_change);
-            s += (double)prev_size * 0.02 * check_speed_change;
-
-            if (s + 20 > car_s && (s - car_s) < 50 && d < (2+4*0+2) && d > (2+4*0-2)){
-              left_open = false;
-            }
-            else{
-              left_open = true;
-            }
-            if (s + 20 > car_s&& (s - car_s) < 50 && d < (2+4*1+2) && d > (2+4*1-2)){
-              center_open = false;
-            }
-            else{
-              center_open = true;
-            }
-            if (s + 20 > car_s && (s - car_s) < 50 && d < (2+4*2+2) && d > (2+4*2-2)){
-              right_open = false;
-            }
-            else{
-              right_open = true;
-            }
-            
+            s += (double)prev_size * 0.02 * check_speed_change;            
 
             //std::cout << "Checking car lane" << d << std::endl;
             // Check if the car is in the same lane as the ego vehicle
@@ -177,12 +157,37 @@ int main() {
               // Calculate the check_car's future location
               check_car_s += (double)prev_size * 0.02 * check_speed;
               // If the check_car is within 30 meters in front, reduce ref_vel so that we don't hit it
-              if (check_car_s > car_s && (check_car_s - car_s) < 30){
+              if (check_car_s > car_s && (check_car_s - car_s) < 20){
                 //ref_vel = 29.5;
                 too_close = true;
-                std::cout << "left open: "   << left_open << std::endl;
-                std::cout << "center open: " << center_open << std::endl;
-                std::cout << "right open: "  << right_open << std::endl;
+                    
+                for (int j = 0; j < sensor_fusion.size(); j++) {
+                  double vx_change = sensor_fusion[j][3];
+                  double vy_change = sensor_fusion[j][4];
+                  float d2 = sensor_fusion[j][6];
+                  float s = sensor_fusion[j][5];
+                  double check_speed_change = sqrt(vx_change*vx_change + vy_change*vy_change);
+                  s += (double)prev_size * 0.02 * check_speed_change;
+                
+                  if (d2 < (2+4*0+2) && d2 > (2+4*0-2)){
+                    if (s > car_s && (s - car_s) < 30){
+                      left_open = false;
+                    }
+                  }
+                  if (d2 < (2+4*1+2) && d2 > (2+4*1-2)){
+                    if (s  > car_s && (s - car_s) < 30){
+                      center_open = false;
+                    }
+                  }
+                  if (d2 < (2+4*2+2) && d2 > (2+4*2-2)){
+                    if (s > car_s && (s - car_s) < 30){
+                      right_open = false;
+                    }
+                  }
+                }
+                std::cout << "Left Open? "   << left_open << std::endl;
+                std::cout << "Center Open? " << center_open << std::endl;
+                std::cout << "Right Open? "  << right_open << std::endl;
                 if(lane == 1){
                   if (left_open){
                     lane = 0;
@@ -191,7 +196,7 @@ int main() {
                     lane = 2;
                   }
                 }
-                else{
+                else if(lane == 0 || lane == 2){
                   if (center_open){
                     lane = 1;
                   }
