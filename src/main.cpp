@@ -170,17 +170,17 @@ int main() {
                   s += (double)prev_size * 0.02 * check_speed_change;
                 
                   if (d2 < (2+4*0+2) && d2 > (2+4*0-2)){
-                    if (s > car_s && (s - car_s) < 30){
+                    if (s + 3 > car_s && (s - car_s) < 30){
                       left_open = false;
                     }
                   }
                   if (d2 < (2+4*1+2) && d2 > (2+4*1-2)){
-                    if (s  > car_s && (s - car_s) < 30){
+                    if (s + 3 > car_s && (s - car_s) < 30){
                       center_open = false;
                     }
                   }
                   if (d2 < (2+4*2+2) && d2 > (2+4*2-2)){
-                    if (s > car_s && (s - car_s) < 30){
+                    if (s + 3 > car_s && (s - car_s) < 30){
                       right_open = false;
                     }
                   }
